@@ -29,12 +29,8 @@ func Generator(ctx context.Context, ch chan<- int64, fn func(int64)) {
 
 // Worker читает число из канала in и пишет его в канал out.
 func Worker(in <-chan int64, out chan<- int64) {
-	for {
-		v, ok := <-in
-		if !ok {
-			close(out)
-			return
-		}
+	defer close(out)
+	for v := range in {
 		out <- v
 		time.Sleep(time.Millisecond)
 	}
